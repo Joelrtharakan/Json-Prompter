@@ -147,15 +147,28 @@ function mockConvertPromptToJSON(prompt) {
   let mockJson = {
     task: "process request",
     inputType: "natural language",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    mode: "demo"
   };
 
   // Simple keyword detection
-  if (words.includes('write') || words.includes('code') || words.includes('function')) {
+  if (words.includes('write') || words.includes('code') || words.includes('function') || words.includes('give') && words.includes('code')) {
     mockJson.task = "write code";
     if (words.includes('python')) mockJson.language = "Python";
     if (words.includes('javascript')) mockJson.language = "JavaScript";
     if (words.includes('typescript')) mockJson.language = "TypeScript";
+    if (words.includes('java')) mockJson.language = "Java";
+    if (words.includes('c++')) mockJson.language = "C++";
+  }
+
+  // Specific function detection
+  if (words.includes('reverse') && words.includes('string')) {
+    mockJson.task = "write code";
+    mockJson.functionality = "reverse string";
+    mockJson.language = mockJson.language || "Python";
+    mockJson.inputParameters = ["string"];
+    mockJson.returnType = "string";
+    mockJson.algorithm = "string reversal";
   }
 
   if (words.includes('scrape') || words.includes('crawl')) {
@@ -169,7 +182,7 @@ function mockConvertPromptToJSON(prompt) {
   if (words.includes('email')) mockJson.contentType = "email";
   if (words.includes('marketing')) mockJson.purpose = "marketing";
 
-  const numberMatch = prompt.match(/\\d+/);
+  const numberMatch = prompt.match(/\d+/);
   if (numberMatch) mockJson.limit = parseInt(numberMatch[0]);
 
   return mockJson;

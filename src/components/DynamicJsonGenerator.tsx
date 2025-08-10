@@ -22,7 +22,7 @@ const DynamicJsonGenerator: React.FC = () => {
     model: 'anthropic/claude-3.5-sonnet'
   });
   const [history, setHistory] = useState<PromptHistory[]>([]);
-  const [apiKey] = useState('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');
+  const [apiKey] = useState(import.meta.env.VITE_OPENROUTER_API_KEY || '');
   const [examplePrompts, setExamplePrompts] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
@@ -34,9 +34,15 @@ const DynamicJsonGenerator: React.FC = () => {
       setHistory(JSON.parse(savedHistory));
     }
 
+    // Check if API key is configured
+    if (!apiKey) {
+      setError('OpenRouter API key not configured. Please add VITE_OPENROUTER_API_KEY to your .env file.');
+      return;
+    }
+
     // Check backend availability and load examples
     checkBackendAndLoadExamples();
-  }, []);
+  }, [apiKey]);
 
   const checkBackendAndLoadExamples = async () => {
     const examples = await llmService.getExamples();
