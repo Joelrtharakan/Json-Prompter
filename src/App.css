@@ -147,8 +147,8 @@ body::before {
   /* 3D glass effect for the main app container */
   box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.18), 0 2px 8px 0 rgba(0,0,0,0.10);
   border-radius: 2.5rem;
-  margin-top: 2.5rem;
-  margin-bottom: 2.5rem;
+  /* margin-top: 2.5rem;
+  margin-bottom: 2.5rem; */
   overflow: visible;
   backdrop-filter: blur(18px);
   animation: fadeInBg 1.2s cubic-bezier(.4,0,.2,1);

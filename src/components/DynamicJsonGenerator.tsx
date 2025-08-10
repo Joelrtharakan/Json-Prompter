@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { llmService } from '../services/llmService';
 import type { LLMProvider, ConvertResponse } from '../services/llmService';
-import { Copy, Zap, Download, History, Sparkles } from 'lucide-react';
+import { Copy, Zap, Download, History, Sparkles, Clock, Trash2, FileText, Lightbulb, Target, Cpu, ArrowRight } from 'lucide-react';
 import './DynamicJsonGenerator.css';
 
 interface PromptHistory {
@@ -22,8 +22,9 @@ const DynamicJsonGenerator: React.FC = () => {
     model: 'anthropic/claude-3.5-sonnet'
   });
   const [history, setHistory] = useState<PromptHistory[]>([]);
-  const [apiKey] = useState('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');
+  const [apiKey] = useState('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');
   const [examplePrompts, setExamplePrompts] = useState<string[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Load settings from localStorage
   useEffect(() => {
@@ -123,121 +124,227 @@ const DynamicJsonGenerator: React.FC = () => {
   const loadFromHistory = (item: PromptHistory) => {
     setPrompt(item.prompt);
     setJsonResult(item.json);
+    setError(null);
   };
+
+  const clearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem('prompt-history');
+  };
+
+  const deleteHistoryItem = (id: string) => {
+    const updatedHistory = history.filter(item => item.id !== id);
+    setHistory(updatedHistory);
+    localStorage.setItem('prompt-history', JSON.stringify(updatedHistory));
+  };
+
+  const displayHistory = history.slice(0, 10); // Show only last 10 items
 
   return (
     <div className="dynamic-json-generator">
-      <div className="header">
-          <div className="header-content">
-            <div className="title">
-              <Sparkles className="title-icon" />
-              <h1>Claude AI JSON Generator</h1>
+      {/* Header */}
+      <header className="app-header">
+        <div className="header-content">
+          <div className="title-section">
+            <Sparkles className="title-icon" size={32} />
+            <div>
+              <h1>JSON Prompter</h1>
+              <p className="subtitle">Professional AI-Powered JSON Generation</p>
             </div>
-            <p className="subtitle">
-              Transform natural language into structured JSON • Powered by Claude 3.5 Sonnet
-            </p>
           </div>
+          <div className="header-actions">
+            <div className="status-indicator">
+              <div className="status-dot active"></div>
+              <span>Claude AI Ready</span>
+            </div>
+            <button 
+              className="history-toggle-btn"
+              onClick={() => setShowHistory(!showHistory)}
+            >
+              <History size={20} />
+              History ({history.length})
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Why Card */}
+      <div className="why-card">
+        <div className="why-content">
+          <div className="why-header">
+            <Lightbulb className="why-icon" size={20} />
+            <h3>Why Convert Text to JSON for AI Models?</h3>
+          </div>
+          <div className="why-benefits">
+            <div className="benefit-item">
+              <Target className="benefit-icon" size={14} />
+              <div className="benefit-text">
+                <strong>Better Structure:</strong> JSON provides clear, hierarchical data organization
+              </div>
+            </div>
+            <div className="benefit-item">
+              <Cpu className="benefit-icon" size={14} />
+              <div className="benefit-text">
+                <strong>Improved Processing:</strong> AI models understand structured data better
+              </div>
+            </div>
+            <div className="benefit-item">
+              <ArrowRight className="benefit-icon" size={14} />
+              <div className="benefit-text">
+                <strong>Enhanced Outputs:</strong> Structured prompts result in higher-quality AI content
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="main-content">
-        <div className="input-section">
-          <div className="input-header">
-            <h2>Enter Your Prompt</h2>
-            <span className="claude-badge">Powered by Claude 3.5 Sonnet</span>
-          </div>
-          
-          <textarea
-            className="prompt-input"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe what you want to do in natural language..."
-            rows={4}
-          />
+      {/* Main Content */}
+      <div className="app-content">
+        {/* Main Layout */}
+        <div className={`main-layout ${showHistory ? 'with-history' : ''}`}>
+          {/* Input Panel */}
+          <div className="input-panel">
+            <div className="panel-header">
+              <h2>
+                <Zap className="section-icon" size={20} />
+                Input Prompt
+              </h2>
+            </div>
+            <div className="input-content">
+              <textarea
+                className="prompt-input"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Describe the JSON structure you want to create...
 
-          <div className="example-prompts">
-            <h4>Try these examples:</h4>
-            <div className="examples-grid">
-              {examplePrompts.map((example, index) => (
-                <button
-                  key={index}
-                  className="example-btn"
-                  onClick={() => setPrompt(example)}
-                >
-                  {example}
-                </button>
-              ))}
+Professional Examples:
+• Employee database with personal details and roles
+• Product inventory with pricing and availability
+• Customer order with items and billing information
+• Project management with tasks and deadlines"
+              />
+              {error && (
+                <div className="error-message">
+                  {error}
+                </div>
+              )}
+              <button
+                className="generate-btn"
+                onClick={handleConvert}
+                disabled={isLoading || !prompt.trim()}
+              >
+                {isLoading ? (
+                  <>
+                    <Sparkles size={20} />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Zap size={20} />
+                    Generate JSON
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
-          <button 
-            className="convert-btn"
-            onClick={handleConvert}
-            disabled={isLoading || !prompt.trim()}
-          >
-            <Zap size={20} />
-            {isLoading ? 'Converting...' : 'Convert to JSON'}
-          </button>
+          {/* Output Panel */}
+          <div className="output-panel">
+            <div className="panel-header">
+              <h2>
+                <FileText className="section-icon" size={20} />
+                Generated JSON
+              </h2>
+              {jsonResult && (
+                <div className="output-actions">
+                  <button className="action-btn" onClick={copyToClipboard}>
+                    <Copy size={16} />
+                    Copy
+                  </button>
+                  <button className="action-btn" onClick={downloadJSON}>
+                    <Download size={16} />
+                    Export
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="output-content">
+              <div className="json-output">
+                {jsonResult ? (
+                  <pre>{JSON.stringify(jsonResult, null, 2)}</pre>
+                ) : (
+                  <div className="empty-state">
+                    <Sparkles size={48} />
+                    <h3>Ready to Generate</h3>
+                    <p>Your structured JSON output will appear here</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
-          {error && (
-            <div className="error-message">
-              {error}
+          {/* History Panel */}
+          {showHistory && (
+            <div className="history-panel">
+              <div className="panel-header">
+                <h2>
+                  <History className="section-icon" size={20} />
+                  Prompt History
+                </h2>
+                <div className="history-actions">
+                  {history.length > 0 && (
+                    <button className="clear-btn" onClick={clearHistory}>
+                      <Trash2 size={16} />
+                      Clear All
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="history-content">
+                {displayHistory.length > 0 ? (
+                  <div className="history-list">
+                    {displayHistory.map((item) => (
+                      <div key={item.id} className="history-item">
+                        <div className="history-preview">
+                          <div className="history-prompt">
+                            {item.prompt.length > 100 
+                              ? `${item.prompt.substring(0, 100)}...` 
+                              : item.prompt}
+                          </div>
+                          <div className="history-meta">
+                            <Clock size={14} />
+                            {new Date(item.timestamp).toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="history-controls">
+                          <button 
+                            className="load-btn"
+                            onClick={() => loadFromHistory(item)}
+                          >
+                            Load
+                          </button>
+                          <button 
+                            className="delete-btn"
+                            onClick={() => deleteHistoryItem(item.id)}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-history">
+                    <History size={48} />
+                    <h3>No History Yet</h3>
+                    <p>Generated prompts will appear here</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
-
-        <div className="output-section">
-          <div className="output-header">
-            <h2>Generated JSON</h2>
-            {jsonResult && (
-              <div className="output-actions">
-                <button className="action-btn" onClick={copyToClipboard}>
-                  <Copy size={16} />
-                  Copy
-                </button>
-                <button className="action-btn" onClick={downloadJSON}>
-                  <Download size={16} />
-                  Download
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="json-output">
-            {jsonResult ? (
-              <pre>{JSON.stringify(jsonResult, null, 2)}</pre>
-            ) : (
-              <div className="empty-state">
-                Your generated JSON will appear here
-              </div>
-            )}
-          </div>
-        </div>
       </div>
-
-      {history.length > 0 && (
-        <div className="history-section">
-          <div className="history-header">
-            <History size={20} />
-            <h3>Recent Conversions</h3>
-          </div>
-          <div className="history-grid">
-            {history.map((item) => (
-              <div 
-                key={item.id} 
-                className="history-item"
-                onClick={() => loadFromHistory(item)}
-              >
-                <div className="history-prompt">
-                  {item.prompt.substring(0, 80)}...
-                </div>
-                <div className="history-meta">
-                  {item.provider} • {new Date(item.timestamp).toLocaleDateString()}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
