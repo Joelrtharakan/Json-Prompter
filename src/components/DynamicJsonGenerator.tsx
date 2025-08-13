@@ -25,6 +25,14 @@ const DynamicJsonGenerator: React.FC = () => {
   const [apiKey] = useState(import.meta.env.VITE_OPENROUTER_API_KEY || '');
   const [examplePrompts, setExamplePrompts] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showWhyModal, setShowWhyModal] = useState(false);
+  // Auto-dismiss why card after 5 seconds
+  useEffect(() => {
+    if (showWhyModal) {
+      const timer = setTimeout(() => setShowWhyModal(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWhyModal]);
 
   // Load settings from localStorage
   useEffect(() => {
@@ -154,7 +162,13 @@ const DynamicJsonGenerator: React.FC = () => {
           <div className="title-section">
             <Sparkles className="title-icon" size={32} />
             <div>
-              <h1>JSON Prompter</h1>
+              <h1
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowWhyModal(true)}
+                title="Why Convert Text to JSON for AI Models?"
+              >
+                JSON Prompter
+              </h1>
               <p className="subtitle">Professional AI-Powered JSON Generation</p>
             </div>
           </div>
@@ -174,35 +188,38 @@ const DynamicJsonGenerator: React.FC = () => {
         </div>
       </header>
 
-      {/* Why Card */}
-      <div className="why-card">
-        <div className="why-content">
-          <div className="why-header">
-            <Lightbulb className="why-icon" size={20} />
-            <h3>Why Convert Text to JSON for AI Models?</h3>
-          </div>
-          <div className="why-benefits">
-            <div className="benefit-item">
-              <Target className="benefit-icon" size={14} />
-              <div className="benefit-text">
-                <strong>Better Structure:</strong> JSON provides clear, hierarchical data organization
-              </div>
+      {/* Why Card Popup Notification */}
+      {showWhyModal && (
+        <div className="why-card why-card-notification">
+          <button className="why-card-close" onClick={() => setShowWhyModal(false)}>&times;</button>
+          <div className="why-content">
+            <div className="why-header">
+              <Lightbulb className="why-icon" size={20} />
+              <h3>Why Convert Text to JSON for AI Models?</h3>
             </div>
-            <div className="benefit-item">
-              <Cpu className="benefit-icon" size={14} />
-              <div className="benefit-text">
-                <strong>Improved Processing:</strong> AI models understand structured data better
+            <div className="why-benefits">
+              <div className="benefit-item">
+                <Target className="benefit-icon" size={14} />
+                <div className="benefit-text">
+                  <strong>Better Structure:</strong> JSON provides clear, hierarchical data organization
+                </div>
               </div>
-            </div>
-            <div className="benefit-item">
-              <ArrowRight className="benefit-icon" size={14} />
-              <div className="benefit-text">
-                <strong>Enhanced Outputs:</strong> Structured prompts result in higher-quality AI content
+              <div className="benefit-item">
+                <Cpu className="benefit-icon" size={14} />
+                <div className="benefit-text">
+                  <strong>Improved Processing:</strong> AI models understand structured data better
+                </div>
+              </div>
+              <div className="benefit-item">
+                <ArrowRight className="benefit-icon" size={14} />
+                <div className="benefit-text">
+                  <strong>Enhanced Outputs:</strong> Structured prompts result in higher-quality AI content
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       <div className="app-content">

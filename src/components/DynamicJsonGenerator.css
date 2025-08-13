@@ -1,3 +1,376 @@
+/* Why Card Notification (top-center popup) */
+/* Why Card Notification (top-center popup, refined) */
+
+.why-card-notification {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 9999 !important;
+  min-width: 520px;
+  max-width: 900px;
+  width: 80vw;
+  min-height: 500px;
+  max-height: 90vh;
+  background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 24px;
+  box-shadow: 
+    0 25px 80px 0 rgba(0,0,0,0.9),
+    0 0 0 1px rgba(255,255,255,0.1),
+    0 0 60px 12px rgba(0,255,255,0.2),
+    inset 0 2px 4px rgba(255,255,255,0.15),
+    inset 0 -2px 4px rgba(0,0,0,0.3);
+  padding: 42px 40px 38px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  animation: whyCard3DEntry 0.6s cubic-bezier(.4,2,.6,1) !important;
+  margin-top: 0;
+  backdrop-filter: blur(24px) saturate(1.5);
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Why Card Content Styling */
+.why-card-notification .why-content {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  flex: 1;
+  min-height: 400px;
+  text-align: center;
+  transform-style: preserve-3d;
+}
+
+.why-card-notification .why-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+  animation: headerFloat 0.8s ease-out 0.2s both;
+}
+
+@keyframes headerFloat {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) translateZ(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+.why-card-notification .why-icon {
+  color: var(--neon-cyan);
+  filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.8));
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { 
+    transform: scale(1) rotateY(0deg);
+    filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.8));
+  }
+  50% { 
+    transform: scale(1.1) rotateY(180deg);
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 1));
+  }
+}
+
+.why-card-notification .why-header h3 {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+}
+
+.why-card-notification .why-benefits {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  width: 100%;
+  flex: 1;
+  min-height: 320px;
+}
+
+.why-card-notification .benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 90px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  animation: benefitSlideIn 0.6s ease-out both;
+}
+
+.why-card-notification .benefit-item:nth-child(1) { animation-delay: 0.4s; }
+.why-card-notification .benefit-item:nth-child(2) { animation-delay: 0.6s; }
+.why-card-notification .benefit-item:nth-child(3) { animation-delay: 0.8s; }
+
+@keyframes benefitSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50px) rotateY(-15deg) translateZ(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0deg) translateZ(0);
+  }
+}
+
+.why-card-notification .benefit-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--neon-pink), var(--neon-cyan));
+  opacity: 0;
+  transition: all 0.4s ease;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.why-card-notification .benefit-item::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
+  transform: translateX(-100%) rotate(45deg);
+  transition: transform 0.6s ease;
+}
+
+.why-card-notification .benefit-item:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: var(--neon-cyan);
+  box-shadow: 
+    0 12px 40px rgba(0, 255, 255, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 2px rgba(0, 255, 255, 0.1);
+  transform: translateY(-4px) rotateX(2deg) scale(1.02);
+}
+
+.why-card-notification .benefit-item:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.why-card-notification .benefit-item:hover::after {
+  transform: translateX(100%) rotate(45deg);
+}
+
+.why-card-notification .benefit-icon {
+  color: var(--neon-pink);
+  filter: drop-shadow(0 0 8px rgba(255, 0, 128, 0.7));
+  flex-shrink: 0;
+  margin-top: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.why-card-notification .benefit-item:hover .benefit-icon {
+  transform: scale(1.15) rotateY(360deg);
+  filter: drop-shadow(0 0 15px rgba(255, 0, 128, 1));
+}
+
+.why-card-notification .benefit-text {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  font-weight: 400;
+  flex: 1;
+  text-align: left;
+}
+
+.why-card-notification .benefit-text strong {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1.08rem;
+  display: block;
+  margin-bottom: 6px;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 0.3px;
+}
+
+/* Add a backdrop overlay for the popup */
+.why-card-notification::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: -1;
+  backdrop-filter: blur(4px);
+}
+
+
+
+@keyframes whyCard3DEntry {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) perspective(1000px) rotateX(-15deg) rotateY(5deg) scale(0.85);
+    filter: blur(4px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) perspective(1000px) rotateX(2deg) rotateY(-1deg) scale(1.02);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes whyCardPopIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92) translateY(-30px);
+    filter: blur(2px);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.03) translateY(4px);
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes whyCardSlideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.why-card-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border: 2px solid var(--neon-pink);
+  color: var(--neon-pink);
+  font-size: 1.6rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1;
+  padding: 8px 12px;
+  border-radius: 50%;
+  box-shadow: 
+    0 4px 12px rgba(255, 0, 128, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.why-card-close:hover {
+  color: #fff;
+  background: linear-gradient(135deg, var(--neon-pink), #ff4080);
+  border: 2px solid #fff;
+  box-shadow: 
+    0 6px 20px rgba(255, 0, 128, 0.5),
+    0 0 20px rgba(255, 0, 128, 0.3);
+  transform: scale(1.05);
+}
+@media (max-width: 600px) {
+  .why-card-notification {
+    min-width: 0;
+    max-width: 90vw;
+    width: 90vw;
+    min-height: 420px;
+    max-height: 92vh;
+    padding: 32px 24px 28px 24px;
+    font-size: 0.92rem;
+    overflow-y: auto;
+  }
+  
+  .why-card-notification .why-content {
+    min-height: 350px;
+    gap: 28px;
+    max-width: none;
+  }
+  
+  .why-card-notification .why-header h3 {
+    font-size: 1.25rem;
+    letter-spacing: 0.3px;
+  }
+  
+  .why-card-notification .benefit-text {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  
+  .why-card-notification .benefit-text strong {
+    font-size: 0.98rem;
+    margin-bottom: 5px;
+  }
+  
+  .why-card-notification .benefit-item {
+    min-height: 80px;
+    padding: 22px 18px;
+    gap: 18px;
+  }
+  
+  .why-card-close {
+    top: 10px;
+    right: 10px;
+    font-size: 1.3rem;
+    padding: 6px 9px;
+  }
+}
+/* Why Card Popup (centered, fixed, professional) */
+.why-card-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1200;
+  min-width: 340px;
+  max-width: 540px;
+  width: 90vw;
+  background: var(--glass-bg);
+  border: 1.5px solid var(--glass-border);
+  border-radius: 22px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 0 0 2px var(--neon-cyan);
+  padding: 38px 38px 32px 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Fira+Code:wght@300;400;500;600&display=swap');
 
 /* Cyberpunk Color Palette */
@@ -45,13 +418,16 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Allow transforms and animations for specific elements */
+*:not(.why-card-notification):not(.why-card-notification *) {
   transform: none !important;
   animation: none !important;
 }
 
 html {
   height: 100vh;
-  overflow: hidden;
   position: fixed;
   width: 100vw;
   top: 0;
@@ -61,7 +437,6 @@ html {
 body {
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
   margin: 0;
   padding: 0;
   font-family: 'Orbitron', monospace;
@@ -119,7 +494,7 @@ body::before {
   display: flex;
   flex-direction: column;
   background: var(--dark-bg);
-  overflow: hidden;
+  /* overflow: hidden; */
   position: fixed;
   top: 0;
   left: 0;
@@ -268,18 +643,13 @@ body::before {
   opacity: 0.7;
 }
 
-.why-content {
-  padding: 28px 40px;
-  height: 100%;
+.app-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-.why-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  overflow: hidden;
+  min-height: 0;
+  height: auto;
 }
 
 .why-icon {
@@ -350,14 +720,14 @@ body::before {
 /* Main Layout - Fixed Position */
 .main-layout {
   position: fixed;
-  top: 275px;
+  top: 88px; /* header height (80px) + 8px for subtle separation */
   left: 16px;
   right: 16px;
   bottom: 16px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .main-layout.with-history {
@@ -794,33 +1164,26 @@ body::before {
     right: 16px;
     height: 120px;
   }
-  
   .why-content {
     padding: 12px 16px;
   }
-  
   .why-benefits {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  
   .benefit-text {
     font-size: 0.7rem;
   }
-  
   .main-layout {
     grid-template-columns: 1fr;
-    top: 220px;
+    top: 88px;
   }
-  
   .main-layout.with-history {
     grid-template-columns: 1fr;
   }
-  
   .header-content {
     padding: 12px 16px;
   }
-  
   .title-section h1 {
     font-size: 1.5rem;
   }
